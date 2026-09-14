@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>주문 내역 · 학원 브랜드 책자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#10142A;
+  --blue:#0F3BC0;
+  --blue-soft:#EEF2FE;
+  --red:#AA003E;
+  --red-soft:#FCEEF3;
+  --paper:#FFFFFF;
+  --shell:#F2F4F9;
+  --line:#DDE2EE;
+  --muted:#626C85;
+  --warn:#B4520A;
+  --warn-soft:#FDF3E8;
+  --ok:#0D7A4F;
+  --radius:14px;
+  --accent:var(--blue);
+  --accent-soft:var(--blue-soft);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#EDF0F7; --paper:#161A28; --shell:#0E111B; --line:#2A3145;
+    --muted:#9BA4BC; --blue:#7C9BFF; --blue-soft:#1B2340;
+    --red:#FF7FA6; --red-soft:#3A1526; --warn:#F0B45F; --warn-soft:#33260F; --ok:#5FD6A2;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#EDF0F7; --paper:#161A28; --shell:#0E111B; --line:#2A3145;
+  --muted:#9BA4BC; --blue:#7C9BFF; --blue-soft:#1B2340;
+  --red:#FF7FA6; --red-soft:#3A1526; --warn:#F0B45F; --warn-soft:#33260F; --ok:#5FD6A2;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--shell); color:var(--ink);
+  font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:16px; line-height:1.65; letter-spacing:-.01em;
+  font-feature-settings:"tnum";
+}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:2.5px solid var(--accent); outline-offset:2px; border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+
+.rail{position:sticky; top:0; z-index:30; background:var(--paper); border-bottom:1px solid var(--line)}
+.rail-in{max-width:680px; margin:0 auto; padding:13px 20px}
+.mark{font-size:12.5px; font-weight:700; color:var(--muted); letter-spacing:.04em}
+.mark b{color:var(--accent)}
+
+main{max-width:680px; margin:0 auto; padding:0 20px 72px}
+.screen{display:none}
+.screen.on{display:block}
+
+.head{padding:34px 0 20px}
+.head .eyebrow{margin:0 0 4px; font-size:13px; font-weight:700; color:var(--accent)}
+.head h1{margin:0; font-size:25px; line-height:1.35; font-weight:900; letter-spacing:-.03em; word-break:keep-all}
+.oid{display:inline-block; margin-top:12px; font-size:13px; font-weight:700; background:var(--paper);
+  border:1px solid var(--line); border-radius:99px; padding:6px 15px; font-variant-numeric:tabular-nums}
+.when{margin:8px 0 0; font-size:12.5px; color:var(--muted)}
+
+.block{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin-bottom:14px}
+.block > h2{margin:0 0 4px; font-size:17px; font-weight:700; letter-spacing:-.02em}
+.block.off{display:none}
+.sum{margin:0}
+.sum-row{display:grid; grid-template-columns:88px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); align-items:baseline}
+.sum-row:last-child{border-bottom:none; padding-bottom:0}
+.sum-row dt{font-size:12.5px; font-weight:500; color:var(--muted)}
+.sum-row dd{margin:0; font-size:14.5px; font-weight:700; letter-spacing:-.01em; word-break:keep-all; line-height:1.6; white-space:pre-line}
+.memo{margin:8px 0 0; font-size:14.5px; line-height:1.7; white-space:pre-line; word-break:keep-all}
+
+.receipt{margin-top:12px; border:1.5px solid var(--line); border-radius:12px; overflow:hidden}
+.receipt .r{display:flex; justify-content:space-between; gap:12px; padding:9px 16px; font-size:13.5px}
+.receipt .r span{color:var(--muted)}
+.receipt .r b{font-weight:700; font-variant-numeric:tabular-nums}
+.receipt .r.sub{border-top:1px solid var(--line)}
+.receipt .tot{display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  padding:14px 16px; background:var(--accent-soft); border-top:1.5px solid var(--line)}
+.receipt .tot span{font-size:13.5px; font-weight:700}
+.receipt .tot b{font-size:23px; font-weight:900; letter-spacing:-.03em; color:var(--accent); font-variant-numeric:tabular-nums}
+
+.acct{margin-top:12px; background:var(--shell); border:1.5px solid var(--line); border-radius:12px; padding:15px 16px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px}
+.acct-no{font-size:17px; font-weight:900; letter-spacing:-.01em; font-variant-numeric:tabular-nums}
+.acct-who{font-size:12.5px; color:var(--muted); margin-top:2px}
+.copy{flex:none; background:var(--paper); border:1.5px solid var(--line); border-radius:9px;
+  padding:8px 14px; font-size:13px; font-weight:700; transition:border-color .16s, color .16s}
+.copy:hover{border-color:var(--accent); color:var(--accent)}
+.copy.done{border-color:var(--ok); color:var(--ok)}
+.terms{margin:14px 0 0; padding:0; list-style:none; display:grid; gap:7px}
+.terms li{font-size:13px; color:var(--muted); line-height:1.6; padding-left:13px; position:relative}
+.terms li::before{content:""; position:absolute; left:2px; top:9px; width:4px; height:4px; border-radius:50%; background:var(--muted); opacity:.5}
+.terms li b{color:var(--ink)}
+.terms li.hot{color:var(--red); font-weight:700}
+.terms li.hot::before{background:var(--red); opacity:1}
+
+.logo{border:2px solid var(--warn); border-radius:var(--radius); background:var(--warn-soft); padding:20px 22px; margin-bottom:14px}
+.logo h2{margin:0 0 6px; font-size:17px; font-weight:900; letter-spacing:-.03em; color:var(--warn)}
+.logo p{margin:0; font-size:14px; line-height:1.65}
+.kakao{display:block; margin:14px 0 0; background:#FAE100; color:#171717; border-radius:11px;
+  padding:14px; text-align:center; font-size:15px; font-weight:900; letter-spacing:-.02em; text-decoration:none}
+
+.state{text-align:center; padding:64px 0 24px}
+.state h1{margin:0 0 8px; font-size:21px; font-weight:900; letter-spacing:-.03em}
+.state p{margin:0 0 4px; font-size:14px; color:var(--muted); line-height:1.7; word-break:keep-all}
+.state a, .footnote a{color:var(--accent); font-weight:700}
+.retry{display:none; margin-top:18px; background:var(--accent); color:#fff; border:none; border-radius:12px;
+  padding:13px 22px; font-size:15px; font-weight:900}
+.retry.on{display:inline-block}
+.footnote{text-align:center; font-size:12.5px; color:var(--muted); line-height:1.7; padding:18px 0 0}
+</style>
+</head>
+<body>
+
+<header class="rail">
+  <div class="rail-in">
+    <div class="mark">클럽하와이 <b>학원 브랜드 책자 주문</b></div>
+  </div>
+</header>
+
+<main>
+
+<section class="screen state on" id="loading">
+  <p>주문 내역을 불러오는 중이에요…</p>
+</section>
+
+<section class="screen state" id="fail">
+  <h1 id="failTitle">주문 내역을 찾을 수 없어요</h1>
+  <p id="failMsg"></p>
+  <p>계속 안 되면 <a href="http://pf.kakao.com/_xdrlwX" target="_blank" rel="noopener">클럽하와이 CS 채널</a>로 문의해 주세요.</p>
+  <button class="retry" id="retry" type="button">다시 불러오기</button>
+</section>
+
+<section class="screen" id="view">
+  <div class="head">
+    <p class="eyebrow">주문 내역</p>
+    <h1 id="vAcademy">—</h1>
+    <div class="oid" id="vOid">주문번호 —</div>
+    <p class="when" id="vWhen"></p>
+  </div>
+
+  <div class="block">
+    <h2>표지·내지</h2>
+    <dl class="sum" id="vCover"></dl>
+  </div>
+
+  <div class="block">
+    <h2>수량·금액</h2>
+    <div class="receipt">
+      <div class="r"><span id="rUnit">권당 단가</span><b id="rBooks">—</b></div>
+      <div class="r"><span>배송비</span><b id="rShip">—</b></div>
+      <div class="r sub"><span>공급가</span><b id="rSupply">—</b></div>
+      <div class="r"><span>부가세 10%</span><b id="rVat">—</b></div>
+      <div class="tot"><span>총 입금액</span><b id="rTotal">—</b></div>
+    </div>
+  </div>
+
+  <!-- 계좌·기한·안내 문구는 index.html 과 같이 고칩니다 -->
+  <div class="block">
+    <h2>입금 안내</h2>
+    <div class="acct">
+      <div>
+        <div class="acct-no">우리 1005-804-454535</div>
+        <div class="acct-who">예금주 (주)에치제이</div>
+      </div>
+      <button class="copy" id="copyAcct" type="button">계좌 복사</button>
+    </div>
+    <ul class="terms">
+      <li>입금자명 <b id="vPayer">—</b></li>
+      <li class="hot">입금 기한은 10월 7일(화)까지예요. 기한까지 확인되지 않으면 자동 취소됩니다.</li>
+      <li>세금계산서도 입금 확인 후 북펀딩에서 함께 안내드려요.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h2>배송</h2>
+    <dl class="sum" id="vShip"></dl>
+  </div>
+
+  <div class="block" id="memoBlock">
+    <h2>요청사항</h2>
+    <p class="memo" id="vMemo"></p>
+  </div>
+
+  <div class="logo">
+    <h2>로고 파일을 보내주셨나요?</h2>
+    <p>로고 파일을 보내주셔야 표지 작업이 시작돼요. AI·인쇄용 PDF 파일이 가장 선명하게 인쇄돼요.</p>
+    <a class="kakao" href="http://pf.kakao.com/_ksxhFn" target="_blank" rel="noopener">북펀딩 채널로 로고 보내기</a>
+  </div>
+
+  <p class="footnote">주문 내용을 바꾸고 싶으시면 <a href="http://pf.kakao.com/_xdrlwX" target="_blank" rel="noopener">클럽하와이 CS 채널</a>로 문의해 주세요.</p>
+</section>
+
+</main>
+
+<script>
+/* index.html 과 같은 Apps Script 웹앱 주소 */
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUx3uTt_bnzaDIOltMwyvTm39E7OtMfHBYGVDUkRYmAV_ONPfWfuxTiQ2QAvjdqBVtZg/exec";
+
+var $ = function(id){ return document.getElementById(id); };
+function show(id){ ["loading","fail","view"].forEach(function(s){ $(s).classList.toggle("on", s === id); }); }
+function won(n){ return (Number(n) || 0).toLocaleString("ko-KR") + "원"; }
+function fail(title, msg, canRetry){
+  $("failTitle").textContent = title;
+  $("failMsg").textContent = msg;
+  $("retry").classList.toggle("on", !!canRetry);
+  show("fail");
+}
+
+/* 시트 값은 손님이 입력한 글이라 textContent 로만 넣습니다 */
+function rows(el, list){
+  el.textContent = "";
+  list.forEach(function(r){
+    if(!r[1]) return;
+    var row = document.createElement("div"), dt = document.createElement("dt"), dd = document.createElement("dd");
+    row.className = "sum-row";
+    dt.textContent = r[0];
+    dd.textContent = r[1];
+    row.appendChild(dt); row.appendChild(dd);
+    el.appendChild(row);
+  });
+}
+
+function load(){
+  var key = new URLSearchParams(location.search).get("o") || "";
+  if(!/^[0-9a-f]{32}$/.test(key)){
+    fail("주문 내역을 찾을 수 없어요", "링크가 잘렸거나 잘못 복사됐을 수 있어요. 알림톡의 버튼을 다시 눌러 주세요.", false);
+    return;
+  }
+  show("loading");
+  fetch(APPS_SCRIPT_URL, { method:"POST", body:JSON.stringify({ action:"detail", key:key }) })
+    .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(res){
+      if(!res || !res.ok){
+        fail("주문 내역을 찾을 수 없어요", "링크가 잘렸거나 주문 정보가 바뀌었을 수 있어요.", false);
+        return;
+      }
+      paint(res.order);
+    }, function(err){
+      console.error("[주문 내역]", err);
+      fail("주문 내역을 불러오지 못했어요", "잠시 뒤 다시 불러와 주세요.", true);
+    });
+}
+
+function paint(o){
+  var red = o.표지컬러 === "레드";
+  document.documentElement.style.setProperty("--accent", red ? "var(--red)" : "var(--blue)");
+  document.documentElement.style.setProperty("--accent-soft", red ? "var(--red-soft)" : "var(--blue-soft)");
+  document.title = "주문 내역 " + o.주문번호 + " · 학원 브랜드 책자";
+
+  $("vAcademy").textContent = o.학원명;
+  $("vOid").textContent = "주문번호 " + o.주문번호;
+  $("vWhen").textContent = o.접수시각 ? o.접수시각 + " 접수" : "";
+
+  rows($("vCover"), [
+    ["표지 컬러", o.표지컬러],
+    ["학원명", o.표지학원명],
+    ["저자명", o.저자명],
+    ["상담문의", o.상담문의]
+  ]);
+
+  $("rUnit").textContent  = "권당 " + won(o.권당단가) + " × " + o.수량 + "권";
+  $("rBooks").textContent = won(o.책값);
+  $("rShip").textContent  = Number(o.배송비) ? won(o.배송비) : "무료";
+  $("rSupply").textContent= won(o.공급가);
+  $("rVat").textContent   = won(o.부가세);
+  $("rTotal").textContent = won(o.총입금액);
+  $("vPayer").textContent = o.입금자명 || "—";
+
+  rows($("vShip"), [
+    ["주문하신 분", [o.주문자명, o.연락처].filter(Boolean).join(" · ")],
+    ["받으시는 분", [o.수령인명, o.수령연락처].filter(Boolean).join(" · ")],
+    ["주소", (o.우편번호 ? "(" + o.우편번호 + ") " : "") + o.주소 + (o.상세주소 ? "\n" + o.상세주소 : "")]
+  ]);
+
+  $("vMemo").textContent = o.요청사항;
+  $("memoBlock").classList.toggle("off", !o.요청사항);
+  show("view");
+}
+
+$("retry").addEventListener("click", load);
+$("copyAcct").addEventListener("click", function(){
+  var btn = this, txt = "1005-804-454535";
+  var done = function(){
+    btn.textContent = "복사했어요"; btn.classList.add("done");
+    setTimeout(function(){ btn.textContent = "계좌 복사"; btn.classList.remove("done"); }, 1800);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done, function(){});
+  }
+});
+
+load();
+</script>
+</body>
+</html>

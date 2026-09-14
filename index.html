@@ -273,6 +273,8 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 .done-head p{margin:0; font-size:14px; color:var(--muted)}
 .oid{display:inline-block; margin-top:13px; font-size:13px; font-weight:700; background:var(--paper);
   border:1px solid var(--line); border-radius:99px; padding:6px 15px; font-variant-numeric:tabular-nums}
+.done-link{display:none; margin-top:12px; font-size:14px; font-weight:700; color:var(--accent); text-underline-offset:3px}
+.done-link.on{display:block}
 .paybox .amt{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:15px}
 .paybox .amt span{font-size:13.5px; font-weight:700}
 .paybox .amt b{font-size:25px; font-weight:900; letter-spacing:-.03em; color:var(--accent); font-variant-numeric:tabular-nums}
@@ -555,6 +557,7 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
     <h1>주문이 접수됐어요</h1>
     <p>이제 로고 파일만 보내주시면 끝나요.</p>
     <div class="oid" id="doneOid">주문번호 —</div>
+    <a class="done-link" id="doneLink" target="_blank" rel="noopener">주문 내역 자세히 보기</a>
   </div>
 
   <div class="logo-notice">
@@ -1023,14 +1026,16 @@ $("submitBtn").addEventListener("click", function(){
   sending = true; btn.disabled = true; btn.textContent = "접수하는 중…";
   $("submitErr").classList.remove("on");
   callServer({ action:"order", tel:state.gateTel, member:{ name:m.name, academy:m.academy }, reqId:state.reqId, order:order })
-    .then(function(res){ finishOrder(res.orderId, res.total); }, function(err){
+    .then(function(res){ finishOrder(res.orderId, res.total, res.link); }, function(err){
       console.error("[주문 접수]", err);
       $("submitErr").classList.add("on");
     })
     .then(function(){ sending = false; btn.textContent = "주문 완료하기"; syncAgree(); });
 });
-function finishOrder(oid, total){
+function finishOrder(oid, total, link){
   $("doneOid").textContent = "주문번호 " + oid;
+  $("doneLink").classList.toggle("on", !!link);
+  if(link) $("doneLink").href = link;
   $("doneAmt").textContent = won(total);
   try{ localStorage.removeItem("bf-draft"); }catch(e){}
   setStep(4);
