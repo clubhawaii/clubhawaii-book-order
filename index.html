@@ -624,13 +624,6 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
   <button data-s="4">완료</button>
 </nav>
 
-<div class="dev">
-  <details>
-    <summary>내부 확인용 · 시트로 넘어가는 값</summary>
-    <pre id="devOut">주문을 완료하면 여기에 표시됩니다.</pre>
-  </details>
-</div>
-
 <script>
 /* =======================================================================
    데모용 회원 DB — 실제 배포 시 이 블록은 통째로 삭제하고
@@ -981,7 +974,6 @@ $("submitBtn").addEventListener("click", function(){
   };
 
   /* 실제 배포 시: fetch(APPS_SCRIPT_URL, {method:"POST", body:JSON.stringify(payload)}) */
-  $("devOut").textContent = JSON.stringify(payload, null, 2);
   $("doneOid").textContent = "주문번호 " + oid;
   $("doneAmt").textContent = won(p.total);
   try{ localStorage.removeItem("bf-draft"); }catch(e){}
