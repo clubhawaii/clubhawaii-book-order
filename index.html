@@ -196,6 +196,7 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 .cbx input:checked::after{content:""; position:absolute; left:6px; top:2px; width:5px; height:10px;
   border:solid #fff; border-width:0 2.4px 2.4px 0; transform:rotate(43deg)}
 .cbx span{font-size:14px; line-height:1.6}
+.field > label.cbx{display:flex; margin-bottom:0}   /* 입력칸 라벨 규칙(block)이 체크박스 줄맞춤을 덮지 않게 */
 .reveal{display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--line)}
 .reveal.on{display:block}
 
@@ -213,6 +214,7 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 .terms li::before{content:""; position:absolute; left:2px; top:9px; width:4px; height:4px; border-radius:50%; background:var(--muted); opacity:.5}
 .terms li.hot{color:var(--red); font-weight:700}
 .terms li.hot::before{background:var(--red); opacity:1}
+.terms a{color:var(--accent); font-weight:700; text-underline-offset:3px}
 
 /* ---------- logo notice ---------- */
 .logo-notice{border:2px solid var(--warn); border-radius:var(--radius); background:var(--paper); overflow:hidden; margin-bottom:14px}
@@ -496,7 +498,7 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 
     <ul class="terms">
       <li class="hot">입금 기한은 10월 7일(화)까지예요. 기한까지 확인되지 않으면 자동 취소됩니다.</li>
-      <li>세금계산서는 입금이 확인되면 북펀딩에서 개별 연락드려요.</li>
+      <li>세금계산서 및 현금영수증 발급을 위해 <a href="http://pf.kakao.com/_ksxhFn" target="_blank" rel="noopener">북펀딩 카카오톡 채널</a>로 사업자등록증 또는 현금영수증 발급번호를 전달해 주세요.</li>
       <li>설명회·배포 일정에 맞춰 여유 있게 주문해 주세요.</li>
     </ul>
 
@@ -619,7 +621,7 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
     </div>
     <ul class="terms">
       <li class="hot">입금 기한은 10월 7일(화)까지예요. 기한까지 확인되지 않으면 자동 취소됩니다.</li>
-      <li>세금계산서도 입금 확인 후 북펀딩에서 함께 안내드려요.</li>
+      <li>세금계산서 및 현금영수증 발급을 위해 <a href="http://pf.kakao.com/_ksxhFn" target="_blank" rel="noopener">북펀딩 카카오톡 채널</a>로 사업자등록증 또는 현금영수증 발급번호를 전달해 주세요.</li>
       <li>시안 확정 후 4박 5일 이내 출고됩니다. 설명회 일정에 맞춰 준비해 주세요.</li>
     </ul>
   </div>
