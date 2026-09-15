@@ -748,12 +748,13 @@ function tryGate(){
     gateBusy = false; btn.disabled = false; btn.textContent = "내 학원 정보 불러오기";
   });
 }
-/* 실패 이유를 한 줄로 — 원장님이 이 화면을 캡처해 CS 로 보내 주시면 원인을 바로 알 수 있게 */
+/* 실패 이유를 한 줄로 — 원장님이 이 화면을 캡처해 CS 로 보내 주시면 원인을 바로 알 수 있게
+   구글 오류 문구에 섞여 오는 시트 ID 같은 긴 영문·숫자 덩어리는 가리고 보여줍니다 (전체 문구는 콘솔에 남음) */
 function whyFailed(err){
   var msg = String(err && err.message || err);
   if(err && err.name === "SyntaxError") return "서버가 오류 페이지를 보냈어요";
   if(/Failed to fetch|NetworkError|Load failed/i.test(msg)) return "서버에 연결하지 못했어요";
-  return msg.slice(0, 100);
+  return msg.replace(/[A-Za-z0-9_-]{20,}/g, "…").slice(0, 100);
 }
 function clearGate(){
   $("gateErr").classList.remove("on");
@@ -789,9 +790,10 @@ $("gateBtn").addEventListener("click", tryGate);
 $("gateNo").addEventListener("input", function(){
   this.value = hyphen(this.value);
   clearGate();
-  /* 번호를 끝까지 치면 버튼을 누르기 전에 미리 물어봅니다 — 누른 뒤 기다리는 시간이 줄어듦 */
+  /* 번호를 끝까지 치면 버튼을 누르기 전에 미리 물어봅니다 — 누른 뒤 기다리는 시간이 줄어듦
+     자릿수로 끝났는지 알 수 있는 010(11자리)·02(10자리)만. 070·031 등은 10자리에서 아직 치는 중일 수 있어 버튼을 기다립니다 */
   var n = this.value.replace(/\D/g,"");
-  if(n.length === 11 || (n.length === 10 && !/^010/.test(n))) lookup(n).catch(function(){});
+  if((/^010/.test(n) && n.length === 11) || (/^02/.test(n) && n.length === 10)) lookup(n).catch(function(){});
 });
 $("gateNo").addEventListener("keydown", function(e){ if(e.key === "Enter") tryGate(); });
 
