@@ -22,6 +22,8 @@
   --warn:#B4520A;
   --warn-soft:#FDF3E8;
   --ok:#0D7A4F;
+  --teal:#0D7A6E;
+  --teal-soft:#E4F4F1;
   --radius:14px;
   --accent:var(--blue);
   --accent-soft:var(--blue-soft);
@@ -30,13 +32,13 @@
   :root:not([data-theme="light"]){
     --ink:#EDF0F7; --paper:#161A28; --shell:#0E111B; --line:#2A3145;
     --muted:#9BA4BC; --blue:#7C9BFF; --blue-d:#A5BAFF; --blue-soft:#1B2340;
-    --red:#FF7FA6; --red-soft:#3A1526; --warn:#F0B45F; --warn-soft:#33260F; --ok:#5FD6A2;
+    --red:#FF7FA6; --red-soft:#3A1526; --warn:#F0B45F; --warn-soft:#33260F; --ok:#5FD6A2; --teal:#5FD6C4; --teal-soft:#123230;
   }
 }
 :root[data-theme="dark"]{
   --ink:#EDF0F7; --paper:#161A28; --shell:#0E111B; --line:#2A3145;
   --muted:#9BA4BC; --blue:#7C9BFF; --blue-d:#A5BAFF; --blue-soft:#1B2340;
-  --red:#FF7FA6; --red-soft:#3A1526; --warn:#F0B45F; --warn-soft:#33260F; --ok:#5FD6A2;
+  --red:#FF7FA6; --red-soft:#3A1526; --warn:#F0B45F; --warn-soft:#33260F; --ok:#5FD6A2; --teal:#5FD6C4; --teal-soft:#123230;
 }
 
 *{box-sizing:border-box}
@@ -281,6 +283,20 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 .paybox .amt{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:15px}
 .paybox .amt span{font-size:13.5px; font-weight:700}
 .paybox .amt b{font-size:25px; font-weight:900; letter-spacing:-.03em; color:var(--accent); font-variant-numeric:tabular-nums}
+.duo{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media (max-width:430px){.duo{grid-template-columns:1fr}}
+.duo .box{border:1px solid var(--line); border-radius:12px; background:var(--shell);
+  padding:13px 12px; text-align:center}
+.chipline{display:flex; flex-wrap:wrap; gap:4px; align-items:center; justify-content:center}
+.chipline i{font-style:normal; font-size:12.5px; font-weight:900; border-radius:7px; padding:3px 8px}
+.chipline em{font-style:normal; font-size:11.5px; font-weight:500; color:var(--muted); margin-left:2px}
+.duo .b1 .chipline i{background:var(--blue-soft); color:var(--blue)}
+.duo .b2 .chipline i{background:var(--teal-soft); color:var(--teal)}
+.duo .rule{height:1px; background:var(--line); margin:11px 0 10px}
+.duo .res{font-size:14.5px; font-weight:900; letter-spacing:-.02em}
+.duo .b1 .res{color:var(--blue)}
+.duo .b2 .res{color:var(--teal)}
+.duo .res small{font-size:12px; font-weight:500; color:var(--muted); margin-left:4px; letter-spacing:0}
 .footnote{text-align:center; font-size:12.5px; color:var(--muted); line-height:1.7; padding:22px 0 0}
 
 .peek{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:60;
@@ -624,6 +640,27 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
       <li class="hot">입금 기한은 10월 7일(화)까지예요. 기한까지 확인되지 않으면 자동 취소됩니다.</li>
       <li>세금계산서 및 현금영수증 발급을 위해 <a href="http://pf.kakao.com/_ksxhFn" target="_blank" rel="noopener">북펀딩 카카오톡 채널</a>로 사업자등록증 또는 현금영수증 발급번호를 전달해 주세요.</li>
       <li>시안 확정 후 4박 5일 이내 출고됩니다. 설명회 일정에 맞춰 준비해 주세요.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h2>시안 전달 일정</h2>
+    <p class="lede">접수하신 요일에 따라 시안을 보내드려요.</p>
+    <div class="duo">
+      <div class="box b1">
+        <div class="chipline"><i>토</i><i>일</i><i>월</i><i>화</i><em>접수</em></div>
+        <div class="rule"></div>
+        <div class="res">목요일<small>시안 전달</small></div>
+      </div>
+      <div class="box b2">
+        <div class="chipline"><i>수</i><i>목</i><i>금</i><em>접수</em></div>
+        <div class="rule"></div>
+        <div class="res">화요일<small>시안 전달</small></div>
+      </div>
+    </div>
+    <ul class="terms">
+      <li>시안을 확정해 주시면 4박 5일 이내에 출고돼요.</li>
+      <li>로고 파일이 도착해야 시안 작업이 시작됩니다.</li>
     </ul>
   </div>
 
