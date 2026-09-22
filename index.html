@@ -533,7 +533,7 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
   <div class="block">
     <h2>요청사항</h2>
     <p class="lede">선택 항목이에요. 표지 정보 수정이 필요하시면 여기에 남겨주세요.</p>
-    <textarea id="fMemo" placeholder="예) 저자명을 '가온수학학원'으로 바꾸고 싶어요.&#10;예) 학원 상담 번호를 053-636-0943으로 바꾸고 싶어요."></textarea>
+    <textarea id="fMemo" placeholder="예) 출간을 '가온수학학원'으로 바꾸고 싶어요.&#10;예) 학원 상담 번호를 053-636-0943으로 바꾸고 싶어요."></textarea>
   </div>
 
   <div class="mini-logo">
@@ -702,8 +702,7 @@ function callServer(body){
 /* 번호로 회원 후보를 찾습니다. 한 번호가 학원 여러 곳에 걸릴 수 있어 배열로 돌려줍니다.
    · 실패하면 잠깐 쉬고 한 번 더 물어봅니다 (Apps Script 가 가끔 한 번씩 오류를 냅니다)
    · 번호를 끝까지 치는 순간 미리 물어 두고, 버튼을 누르면 그 답을 이어 받습니다
-   · 버튼이 받아 간 답은 바로 잊어서, 다시 누르면 시트에서 새로 가져옵니다 (시트를 고친 값이 반영되게)
-   · 「명단에 없음」과 실패도 기억하지 않습니다 */
+   · 「명단에 없음」과 실패는 기억하지 않아서, 다시 누르면 새로 물어봅니다 */
 var lookups = {};
 function lookup(raw){
   var n = String(raw||"").replace(/\D/g,"");
@@ -775,7 +774,6 @@ function tryGate(){
   clearGate();
   gateBusy = true; btn.disabled = true; btn.textContent = "확인하는 중…";
   lookup(tel).then(function(list){
-    delete lookups[String(tel).replace(/\D/g,"")];
     if(!list.length) $("gateErr").classList.add("on");
     else if(list.length === 1) enterMember(list[0], tel);
     else showPicker(list, tel);
