@@ -165,8 +165,8 @@ main{max-width:680px; margin:0 auto; padding:0 20px 72px}
       </div>
       <button class="copy" id="copyInv" type="button">번호 복사</button>
     </div>
-    <a class="go" id="vTrack" href="#" target="_blank" rel="noopener">택배사에서 배송 위치 보기</a>
-    <p class="hint">출고 당일에는 택배사에 아직 조회되지 않을 수 있어요. 다음 날 다시 확인해 주세요.</p>
+    <a class="go" id="vTrack" href="#" target="_blank" rel="noopener">네이버에서 배송 조회하기</a>
+    <p class="hint">출고 당일에는 아직 조회되지 않을 수 있어요. 다음 날 다시 확인해 주세요.</p>
   </div>
 
   <div class="block">
@@ -226,8 +226,8 @@ function paint(s){
   $("vOid").textContent = "주문번호 " + s.주문번호;
 
   var sent = !!s.송장번호;
-  /* 시안전달 칸 — "" 준비 중 · "확인중" 전달해서 확인 받는 중 · "완료" 확정 (예전 서버는 시안확인만 보냄) */
-  var draft = s.시안상태 != null ? s.시안상태 : (s.시안확인 ? "완료" : "");
+  /* 시안전달 칸 — "" 준비 중 · "확인중" 전달해서 확인 받는 중 · "완료" 확정 */
+  var draft = s.시안상태 || "";
   var steps = [
     { name:"주문 접수 · 입금 확인" + (s.입금확인 ? "" : " 중"), done:s.입금확인, note:s.접수일 ? s.접수일 + " 접수" : "" },
     { name:"표지 시안 전달", done:!!draft },
@@ -265,7 +265,6 @@ function paint(s){
     $("vCourier").textContent = s.택배사 || "택배";
     $("vInvoice").textContent = s.송장번호;
     $("vTrack").href = s.조회링크;
-    $("vTrack").textContent = (s.택배사 || "택배사") + "에서 배송 위치 보기";
   }
 
   var addr = $("vAddr");
