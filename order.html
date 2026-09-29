@@ -117,6 +117,8 @@ main{max-width:680px; margin:0 auto; padding:0 20px 72px}
 .retry{display:none; margin-top:18px; background:var(--accent); color:#fff; border:none; border-radius:12px;
   padding:13px 22px; font-size:15px; font-weight:900}
 .retry.on{display:inline-block}
+.track{display:block; margin-top:14px; padding:12px; text-align:center; font-size:14px; font-weight:700;
+  color:var(--accent); text-decoration:none; border:1.5px solid var(--line); border-radius:11px}
 .footnote{text-align:center; font-size:12.5px; color:var(--muted); line-height:1.7; padding:18px 0 0}
 </style>
 </head>
@@ -185,6 +187,7 @@ main{max-width:680px; margin:0 auto; padding:0 20px 72px}
   <div class="block">
     <h2>배송</h2>
     <dl class="sum" id="vShip"></dl>
+    <a class="track" id="vTrack" href="#">배송 진행 상황 보기</a>
   </div>
 
   <div class="block" id="memoBlock">
@@ -282,6 +285,8 @@ function paint(o){
     ["받으시는 분", [o.수령인명, o.수령연락처].filter(Boolean).join(" · ")],
     ["주소", (o.우편번호 ? "(" + o.우편번호 + ") " : "") + o.주소 + (o.상세주소 ? "\n" + o.상세주소 : "")]
   ]);
+
+  $("vTrack").href = "ship.html" + location.search;   // 같은 조회키로 배송 조회 화면
 
   $("vMemo").textContent = o.요청사항;
   $("memoBlock").classList.toggle("off", !o.요청사항);

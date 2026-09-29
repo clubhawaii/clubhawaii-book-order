@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>배송 조회 · 학원 브랜드 책자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* 색·글꼴은 order.html 과 맞춥니다 */
+:root{
+  --ink:#10142A;
+  --blue:#0F3BC0;
+  --blue-soft:#EEF2FE;
+  --red:#AA003E;
+  --red-soft:#FCEEF3;
+  --paper:#FFFFFF;
+  --shell:#F2F4F9;
+  --line:#DDE2EE;
+  --muted:#626C85;
+  --ok:#0D7A4F;
+  --radius:14px;
+  --accent:var(--blue);
+  --accent-soft:var(--blue-soft);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#EDF0F7; --paper:#161A28; --shell:#0E111B; --line:#2A3145;
+    --muted:#9BA4BC; --blue:#7C9BFF; --blue-soft:#1B2340;
+    --red:#FF7FA6; --red-soft:#3A1526; --ok:#5FD6A2;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#EDF0F7; --paper:#161A28; --shell:#0E111B; --line:#2A3145;
+  --muted:#9BA4BC; --blue:#7C9BFF; --blue-soft:#1B2340;
+  --red:#FF7FA6; --red-soft:#3A1526; --ok:#5FD6A2;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--shell); color:var(--ink);
+  font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:16px; line-height:1.65; letter-spacing:-.01em;
+  font-feature-settings:"tnum";
+}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:2.5px solid var(--accent); outline-offset:2px; border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+
+.rail{position:sticky; top:0; z-index:30; background:var(--paper); border-bottom:1px solid var(--line)}
+.rail-in{max-width:680px; margin:0 auto; padding:13px 20px}
+.mark{font-size:12.5px; font-weight:700; color:var(--muted); letter-spacing:.04em}
+.mark b{color:var(--accent)}
+
+main{max-width:680px; margin:0 auto; padding:0 20px 72px}
+.screen{display:none}
+.screen.on{display:block}
+
+.head{padding:34px 0 20px}
+.head .eyebrow{margin:0 0 4px; font-size:13px; font-weight:700; color:var(--accent)}
+.head h1{margin:0; font-size:25px; line-height:1.35; font-weight:900; letter-spacing:-.03em; word-break:keep-all}
+.oid{display:inline-block; margin-top:12px; font-size:13px; font-weight:700; background:var(--paper);
+  border:1px solid var(--line); border-radius:99px; padding:6px 15px; font-variant-numeric:tabular-nums}
+
+.block{background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin-bottom:14px}
+.block > h2{margin:0 0 4px; font-size:17px; font-weight:700; letter-spacing:-.02em}
+.block.off{display:none}
+
+/* 지금 상태 */
+.now{border:2px solid var(--accent)}
+.now h2{margin:0; font-size:21px; font-weight:900; letter-spacing:-.03em; color:var(--accent); word-break:keep-all}
+.now p{margin:6px 0 0; font-size:14px; color:var(--muted); word-break:keep-all}
+
+/* 진행 단계 */
+.steps{list-style:none; margin:14px 0 0; padding:0}
+.step{position:relative; display:grid; grid-template-columns:28px 1fr; gap:12px; padding-bottom:18px}
+.step:last-child{padding-bottom:0}
+.step::before{content:""; position:absolute; left:13px; top:28px; bottom:0; width:2px; background:var(--line)}
+.step:last-child::before{display:none}
+.step.done::before{background:var(--accent)}
+.dot{width:28px; height:28px; border-radius:50%; border:2px solid var(--line); background:var(--paper);
+  display:grid; place-items:center; font-size:13px; font-weight:900; color:var(--muted)}
+.step.done .dot{background:var(--accent); border-color:var(--accent); color:#fff}
+.step.cur .dot{border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 4px var(--accent-soft)}
+.step b{display:block; font-size:15px; font-weight:700; line-height:28px}
+.step:not(.done):not(.cur) b{color:var(--muted); font-weight:500}
+.step span{display:block; font-size:13px; color:var(--muted); line-height:1.5}
+
+/* 택배 정보 */
+.inv{margin-top:12px; background:var(--shell); border:1.5px solid var(--line); border-radius:12px; padding:15px 16px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px}
+.inv-co{font-size:12.5px; color:var(--muted)}
+.inv-no{font-size:18px; font-weight:900; letter-spacing:.01em; font-variant-numeric:tabular-nums; word-break:break-all}
+.copy{flex:none; background:var(--paper); border:1.5px solid var(--line); border-radius:9px;
+  padding:8px 14px; font-size:13px; font-weight:700; transition:border-color .16s, color .16s}
+.copy:hover{border-color:var(--accent); color:var(--accent)}
+.copy.done{border-color:var(--ok); color:var(--ok)}
+.go{display:block; margin-top:12px; background:var(--accent); color:#fff; border-radius:12px; padding:15px;
+  text-align:center; font-size:15.5px; font-weight:900; letter-spacing:-.02em; text-decoration:none}
+.hint{margin:10px 0 0; font-size:13px; color:var(--muted); line-height:1.6; word-break:keep-all}
+
+.sum{margin:0}
+.sum-row{display:grid; grid-template-columns:88px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); align-items:baseline}
+.sum-row:last-child{border-bottom:none; padding-bottom:0}
+.sum-row dt{font-size:12.5px; font-weight:500; color:var(--muted)}
+.sum-row dd{margin:0; font-size:14.5px; font-weight:700; word-break:keep-all; line-height:1.6; white-space:pre-line}
+
+.more{display:block; text-align:center; margin:4px 0 0; padding:14px; font-size:14px; font-weight:700;
+  color:var(--accent); text-decoration:none; background:var(--paper); border:1px solid var(--line); border-radius:var(--radius)}
+
+.state{text-align:center; padding:64px 0 24px}
+.state h1{margin:0 0 8px; font-size:21px; font-weight:900; letter-spacing:-.03em}
+.state p{margin:0 0 4px; font-size:14px; color:var(--muted); line-height:1.7; word-break:keep-all}
+.state a, .footnote a{color:var(--accent); font-weight:700}
+.retry{display:none; margin-top:18px; background:var(--accent); color:#fff; border:none; border-radius:12px;
+  padding:13px 22px; font-size:15px; font-weight:900}
+.retry.on{display:inline-block}
+.footnote{text-align:center; font-size:12.5px; color:var(--muted); line-height:1.7; padding:18px 0 0}
+</style>
+</head>
+<body>
+
+<header class="rail">
+  <div class="rail-in">
+    <div class="mark">클럽하와이 <b>학원 브랜드 책자 주문</b></div>
+  </div>
+</header>
+
+<main>
+
+<section class="screen state on" id="loading">
+  <p>배송 정보를 불러오는 중이에요…</p>
+</section>
+
+<section class="screen state" id="fail">
+  <h1 id="failTitle">배송 정보를 찾을 수 없어요</h1>
+  <p id="failMsg"></p>
+  <p>계속 안 되면 <a href="http://pf.kakao.com/_xdrlwX" target="_blank" rel="noopener">클럽하와이 CS 채널</a>로 문의해 주세요.</p>
+  <button class="retry" id="retry" type="button">다시 불러오기</button>
+</section>
+
+<section class="screen" id="view">
+  <div class="head">
+    <p class="eyebrow">배송 조회</p>
+    <h1 id="vAcademy">—</h1>
+    <div class="oid" id="vOid">주문번호 —</div>
+  </div>
+
+  <div class="block now">
+    <h2 id="nowTitle">—</h2>
+    <p id="nowSub"></p>
+    <ol class="steps" id="steps"></ol>
+  </div>
+
+  <div class="block off" id="invBlock">
+    <h2>택배 정보</h2>
+    <div class="inv">
+      <div>
+        <div class="inv-co" id="vCourier">—</div>
+        <div class="inv-no" id="vInvoice">—</div>
+      </div>
+      <button class="copy" id="copyInv" type="button">번호 복사</button>
+    </div>
+    <a class="go" id="vTrack" href="#" target="_blank" rel="noopener">택배사에서 배송 위치 보기</a>
+    <p class="hint">출고 당일에는 택배사에 아직 조회되지 않을 수 있어요. 다음 날 다시 확인해 주세요.</p>
+  </div>
+
+  <div class="block">
+    <h2>받으시는 곳</h2>
+    <dl class="sum" id="vAddr"></dl>
+  </div>
+
+  <a class="more" id="vDetail" href="#">주문 내역 전체 보기</a>
+
+  <p class="footnote">배송지를 바꾸거나 문의할 일이 있으면 <a href="http://pf.kakao.com/_xdrlwX" target="_blank" rel="noopener">클럽하와이 CS 채널</a>로 알려 주세요.</p>
+</section>
+
+</main>
+
+<script>
+/* index.html · order.html 과 같은 Apps Script 웹앱 주소 */
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUx3uTt_bnzaDIOltMwyvTm39E7OtMfHBYGVDUkRYmAV_ONPfWfuxTiQ2QAvjdqBVtZg/exec";
+
+var $ = function(id){ return document.getElementById(id); };
+var KEY = new URLSearchParams(location.search).get("o") || "";
+function show(id){ ["loading","fail","view"].forEach(function(s){ $(s).classList.toggle("on", s === id); }); }
+function fail(title, msg, canRetry){
+  $("failTitle").textContent = title;
+  $("failMsg").textContent = msg;
+  $("retry").classList.toggle("on", !!canRetry);
+  show("fail");
+}
+
+function load(){
+  if(!/^[0-9a-f]{32}$/.test(KEY)){
+    fail("배송 정보를 찾을 수 없어요", "링크가 잘렸거나 잘못 복사됐을 수 있어요. 알림톡의 버튼을 다시 눌러 주세요.", false);
+    return;
+  }
+  show("loading");
+  fetch(APPS_SCRIPT_URL, { method:"POST", body:JSON.stringify({ action:"ship", key:KEY }) })
+    .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(res){
+      if(!res || !res.ok){
+        fail("배송 정보를 찾을 수 없어요", "링크가 잘렸거나 주문 정보가 바뀌었을 수 있어요.", false);
+        return;
+      }
+      paint(res.ship);
+    }, function(err){
+      console.error("[배송 조회]", err);
+      fail("배송 정보를 불러오지 못했어요", "잠시 뒤 다시 불러와 주세요.", true);
+    });
+}
+
+/* 시트 값은 textContent 로만 넣습니다 */
+function paint(s){
+  var red = s.표지컬러 === "레드";
+  document.documentElement.style.setProperty("--accent", red ? "var(--red)" : "var(--blue)");
+  document.documentElement.style.setProperty("--accent-soft", red ? "var(--red-soft)" : "var(--blue-soft)");
+  document.title = "배송 조회 " + s.주문번호 + " · 학원 브랜드 책자";
+
+  $("vAcademy").textContent = s.학원명;
+  $("vOid").textContent = "주문번호 " + s.주문번호;
+
+  var sent = !!s.송장번호;
+  var steps = [
+    { name:"주문 접수",      done:true,         note:s.접수일 },
+    { name:"입금 확인",      done:s.입금확인 },
+    { name:"표지 시안 전달", done:s.시안확인 },
+    { name:"제작·출고",      done:sent,         note:s.출고예정일 ? s.출고예정일 + (sent ? " 출고" : " 출고 예정") : "" },
+    { name:"배송 중",        done:false,        note:sent ? "택배사에서 위치를 확인할 수 있어요" : "" }
+  ];
+  /* 아직 안 끝난 첫 단계가 「지금」 — 뒤 단계가 먼저 체크돼도 앞 단계를 건너뛰지 않게 여기서 멈춥니다 */
+  var cur = steps.findIndex(function(x){ return !x.done; });
+  $("steps").textContent = "";
+  steps.forEach(function(x, i){
+    var li = document.createElement("li"), dot = document.createElement("div"), txt = document.createElement("div");
+    var b = document.createElement("b"), done = i < cur || cur < 0;
+    li.className = "step" + (done ? " done" : i === cur ? " cur" : "");
+    dot.className = "dot";
+    dot.textContent = done ? "✓" : String(i + 1);
+    b.textContent = x.name;
+    txt.appendChild(b);
+    if(x.note){ var sp = document.createElement("span"); sp.textContent = x.note; txt.appendChild(sp); }
+    li.appendChild(dot); li.appendChild(txt);
+    $("steps").appendChild(li);
+  });
+
+  var head = sent            ? ["책자가 출발했어요", "아래 버튼으로 지금 어디쯤 왔는지 확인할 수 있어요."]
+           : s.출고예정일     ? [s.출고예정일 + " 출고 예정이에요", "출고되면 송장 번호를 알림톡으로 보내드려요."]
+           : s.시안확인       ? ["책자를 만들고 있어요", "출고일이 정해지면 이 화면에 표시돼요."]
+           : s.입금확인       ? ["표지 시안을 준비하고 있어요", "시안을 전달드린 뒤 제작이 시작돼요."]
+           :                    ["입금을 기다리고 있어요", "입금이 확인되면 표지 작업을 시작해요."];
+  $("nowTitle").textContent = head[0];
+  $("nowSub").textContent = head[1];
+
+  $("invBlock").classList.toggle("off", !sent);
+  if(sent){
+    $("vCourier").textContent = s.택배사 || "택배";
+    $("vInvoice").textContent = s.송장번호;
+    $("vTrack").href = s.조회링크;
+    $("vTrack").textContent = (s.택배사 || "택배사") + "에서 배송 위치 보기";
+  }
+
+  var addr = $("vAddr");
+  addr.textContent = "";
+  [["받는 분", s.수령인명], ["주소", (s.우편번호 ? "(" + s.우편번호 + ") " : "") + s.주소 + (s.상세주소 ? "\n" + s.상세주소 : "")], ["수량", s.수량 ? s.수량 + "권" : ""]]
+    .forEach(function(r){
+      if(!r[1]) return;
+      var row = document.createElement("div"), dt = document.createElement("dt"), dd = document.createElement("dd");
+      row.className = "sum-row"; dt.textContent = r[0]; dd.textContent = r[1];
+      row.appendChild(dt); row.appendChild(dd); addr.appendChild(row);
+    });
+
+  $("vDetail").href = "order.html?o=" + KEY;
+  show("view");
+}
+
+$("retry").addEventListener("click", load);
+$("copyInv").addEventListener("click", function(){
+  var btn = this, txt = $("vInvoice").textContent.replace(/\D/g, "");
+  var done = function(){
+    btn.textContent = "복사했어요"; btn.classList.add("done");
+    setTimeout(function(){ btn.textContent = "번호 복사"; btn.classList.remove("done"); }, 1800);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done, function(){});
+  }
+});
+
+load();
+</script>
+</body>
+</html>
