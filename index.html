@@ -299,6 +299,13 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 .duo .res small{font-size:12px; font-weight:500; color:var(--muted); margin-left:4px; letter-spacing:0}
 .footnote{text-align:center; font-size:12.5px; color:var(--muted); line-height:1.7; padding:22px 0 0}
 
+/* ---------- closed ---------- */
+.closed{text-align:center; padding:46px 0 26px}
+.closed .when{display:inline-block; margin-bottom:15px; font-size:12.5px; font-weight:700; color:var(--muted);
+  background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:5px 14px; font-variant-numeric:tabular-nums}
+.closed h1{margin:0 0 8px; font-size:26px; font-weight:900; line-height:1.35; letter-spacing:-.035em}
+.closed p{margin:0; font-size:14.5px; color:var(--muted); line-height:1.7}
+
 .peek{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:60;
   display:flex; align-items:center; gap:4px; background:rgba(16,20,42,.93); backdrop-filter:blur(8px);
   border-radius:99px; padding:5px 6px 5px 13px; box-shadow:0 6px 22px rgba(16,20,42,.3)}
@@ -667,6 +674,26 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
   <p class="footnote">이 화면을 캡처해 두시면 편해요.<br>궁금한 점은 <a href="http://pf.kakao.com/_xdrlwX" target="_blank" rel="noopener">클럽하와이 CS 채널</a>로 문의해 주세요.</p>
 </section>
 
+<!-- ================= 마감 (CLOSE_AT 이 지나면) ================= -->
+<section class="screen" id="s0">
+  <div class="closed">
+    <div class="when">10월 2일(목) 밤 12시 마감</div>
+    <h1>책자 주문이 마감됐어요</h1>
+    <p>지금은 새 주문을 받지 않아요.</p>
+  </div>
+
+  <div class="block">
+    <h2>이미 주문하셨다면</h2>
+    <ul class="terms">
+      <li>주문 내역과 배송 진행 상황은 알림톡으로 받으신 주문 내역 링크에서 확인하실 수 있어요.</li>
+      <li class="hot">입금 기한은 10월 7일(화)까지예요. 기한까지 확인되지 않으면 자동 취소됩니다.</li>
+      <li>로고 파일을 아직 보내지 않으셨다면 <a href="http://pf.kakao.com/_ksxhFn" target="_blank" rel="noopener">북펀딩 카카오톡 채널</a>로 보내주세요.</li>
+    </ul>
+  </div>
+
+  <p class="footnote">궁금한 점은 <a href="http://pf.kakao.com/_xdrlwX" target="_blank" rel="noopener">클럽하와이 CS 채널</a>로 문의해 주세요.</p>
+</section>
+
 </main>
 
 <nav class="peek" id="peek" aria-label="검토용 화면 이동">
@@ -679,14 +706,18 @@ textarea{min-height:96px; resize:vertical; line-height:1.6}
 
 <script>
 /* =========================================================
-   설정 — 이 두 줄만 만지면 됩니다
+   설정 — 이 세 줄만 만지면 됩니다
    PREVIEW          true  = 검토 모드 (서버 없이 아무 번호나 통과 + 하단 이동 바, 주문은 기록 안 됨)
                     false = 실제 운영 모드
    APPS_SCRIPT_URL  Apps Script 웹앱 주소(…/exec). 회원 확인과 주문 기록이 이 주소로 갑니다.
                     붙일 코드와 배포 방법은 같은 폴더 북펀딩_apps_script.gs 맨 위에 있어요.
+   CLOSE_AT         주문 마감 시각. 지나면 첫 화면 대신 마감 안내(#s0)가 나오고, 작성 중이던 분도 다음 버튼에서 마감 안내로 넘어갑니다.
+                    서버(북펀딩_apps_script.gs 의 CLOSE_AT)도 같은 시각부터 접수를 막습니다.
+                    다시 열려면 두 곳 날짜를 함께 미루고, 마감 안내의 날짜 문구도 고칩니다. 비워 두면("") 마감 없음
    ========================================================= */
 var PREVIEW = false;
 var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUx3uTt_bnzaDIOltMwyvTm39E7OtMfHBYGVDUkRYmAV_ONPfWfuxTiQ2QAvjdqBVtZg/exec";
+var CLOSE_AT = "2026-10-03T00:00:00+09:00";   // 10월 2일(목) 밤 12시
 
 /* 검토 모드 전용 가짜 회원 — 실제 명단은 시트에만 두고 페이지에 싣지 않습니다 */
 var SAMPLE_MEMBER = { name:"김가온", academy:"가온수학학원", tel:"010-1234-5678", author:"가온수학학원 김가온 원장" };
@@ -696,7 +727,12 @@ function callServer(body){
   if(!APPS_SCRIPT_URL) return Promise.reject(new Error("APPS_SCRIPT_URL 이 비어 있어요"));
   return fetch(APPS_SCRIPT_URL, { method:"POST", body:JSON.stringify(body) })
     .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-    .then(function(res){ if(!res || !res.ok) throw new Error((res && res.error) || "서버 응답 오류"); return res; });
+    .then(function(res){
+      if(res && res.ok) return res;
+      var err = new Error((res && res.error) || "서버 응답 오류");
+      err.closed = !!(res && res.closed);   // 서버가 마감을 알려 온 경우 — 마감 안내로 넘깁니다
+      throw err;
+    });
 }
 
 /* 번호로 회원 후보를 찾습니다. 한 번호가 학원 여러 곳에 걸릴 수 있어 배열로 돌려줍니다.
@@ -713,6 +749,7 @@ function lookup(raw){
     var ask = function(){ return callServer({ action:"member", tel:n }); };
     lookups[n] = ask()
       .catch(function(err){
+        if(err.closed) throw err;
         console.warn("[회원 확인] 한 번 더 시도", err);
         return new Promise(function(done){ setTimeout(done, 700); }).then(ask);
       })
@@ -750,6 +787,18 @@ function setStep(n){
   window.scrollTo({top:0, behavior:"instant"});
 }
 
+/* ---------- 마감 ---------- */
+/* 기기 시계로 먼저 보고, 시계가 늦은 기기는 서버가 closed 로 알려 오면 그때 넘깁니다 */
+function isClosed(){ return !!CLOSE_AT && Date.now() >= Date.parse(CLOSE_AT); }
+function showClosed(){
+  state.step = 0;
+  ["s1","s2","s3","s4"].forEach(function(id){ $(id).classList.remove("on"); });
+  $("s0").classList.add("on");
+  $("railCount").textContent = "마감";
+  $("barFill").parentNode.style.display = $("steps").style.display = "none";
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
 /* ---------- 전화번호 자동 하이픈 ---------- */
 function hyphen(v){
   var n = String(v||"").replace(/\D/g,"").slice(0,11);
@@ -771,6 +820,7 @@ function hyphen(v){
 var gateBusy = false;
 function tryGate(){
   if(gateBusy) return;
+  if(isClosed()) return showClosed();
   var btn = $("gateBtn"), tel = $("gateNo").value;
   clearGate();
   gateBusy = true; btn.disabled = true; btn.textContent = "확인하는 중…";
@@ -780,6 +830,7 @@ function tryGate(){
     else if(list.length === 1) enterMember(list[0], tel);
     else showPicker(list, tel);
   }, function(err){
+    if(err.closed) return showClosed();
     console.error("[회원 확인]", err);
     $("gateNetWhy").textContent = "오류 내용: " + whyFailed(err);
     $("gateNetErr").classList.add("on");
@@ -1000,6 +1051,7 @@ var REQUIRED = [
   ["fAddr1","주소"], ["fAddr2","상세주소"], ["fZip","우편번호"]
 ];
 $("toReview").addEventListener("click", function(){
+  if(isClosed()) return showClosed();
   var miss = null;
   for(var i=0;i<REQUIRED.length;i++){
     if(!$(REQUIRED[i][0]).value.trim()){ miss = REQUIRED[i]; break; }
@@ -1072,6 +1124,7 @@ $("back2").addEventListener("click", function(){ setStep(2); });
 var sending = false;
 $("submitBtn").addEventListener("click", function(){
   if(sending) return;
+  if(isClosed()) return showClosed();
   var btn = this, m = state.member, p = state.price;
 
   /* 표지 회원 정보·주문번호·금액은 서버가 시트 명단과 가격표로 다시 채웁니다 */
@@ -1102,6 +1155,7 @@ $("submitBtn").addEventListener("click", function(){
   $("submitErr").classList.remove("on");
   callServer({ action:"order", tel:state.gateTel, member:{ name:m.name, academy:m.academy }, reqId:state.reqId, order:order })
     .then(function(res){ finishOrder(res.orderId, res.total, res.link); }, function(err){
+      if(err.closed) return showClosed();
       console.error("[주문 접수]", err);
       $("submitErr").classList.add("on");
     })
@@ -1176,6 +1230,7 @@ function markPeek(n){
 
 load();
 setStep(1);
+if(isClosed()) showClosed();
 </script>
 </body>
 </html>
